@@ -1,0 +1,30 @@
+name: english_for_kids
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  google_mlkit_image_labeling: ^0.14.1
+  camera: ^0.11.3
+  exo_shared:
+    git:
+      url: git@github.com:trungs99/exo_shared.git
+      ref: v1.0.7
+  flutter_tts: ^4.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
