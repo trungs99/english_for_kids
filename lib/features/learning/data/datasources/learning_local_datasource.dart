@@ -1,9 +1,10 @@
 import 'package:isar_community/isar.dart';
-import '../models/topic_model.dart';
-import '../models/lesson_model.dart';
-import '../models/vocabulary_model.dart';
+
 import '../../domain/entities/lesson_step_type.dart';
 import '../constants/constants.dart';
+import '../models/lesson_model.dart';
+import '../models/topic_model.dart';
+import '../models/vocabulary_model.dart';
 
 /// Local data source for learning feature using Isar database
 class LearningLocalDataSource {
@@ -28,10 +29,7 @@ class LearningLocalDataSource {
 
   /// Get a specific topic by ID
   Future<TopicModel?> getTopicById(String topicId) async {
-    final topic = await _isar.topicModels
-        .filter()
-        .modelIdEqualTo(topicId)
-        .findFirst();
+    final topic = await _isar.topicModels.filter().modelIdEqualTo(topicId).findFirst();
 
     if (topic != null) {
       await topic.lessons.load();
@@ -45,10 +43,7 @@ class LearningLocalDataSource {
 
   /// Get a specific lesson by ID
   Future<LessonModel?> getLessonById(String lessonId) async {
-    final lesson = await _isar.lessonModels
-        .filter()
-        .modelIdEqualTo(lessonId)
-        .findFirst();
+    final lesson = await _isar.lessonModels.filter().modelIdEqualTo(lessonId).findFirst();
 
     if (lesson != null) {
       await lesson.vocabularies.load();
@@ -58,15 +53,9 @@ class LearningLocalDataSource {
   }
 
   /// Update lesson progress
-  Future<void> updateLessonProgress(
-    String lessonId,
-    LessonStep completedStep,
-  ) async {
+  Future<void> updateLessonProgress(String lessonId, LessonStep completedStep) async {
     await _isar.writeTxn(() async {
-      final lesson = await _isar.lessonModels
-          .filter()
-          .modelIdEqualTo(lessonId)
-          .findFirst();
+      final lesson = await _isar.lessonModels.filter().modelIdEqualTo(lessonId).findFirst();
 
       if (lesson == null) return;
 
@@ -83,14 +72,9 @@ class LearningLocalDataSource {
           lesson.isCompleted = true;
 
           // Unlock next lesson
-          final allLessons = await _isar.lessonModels
-              .where()
-              .sortByOrderIndex()
-              .findAll();
+          final allLessons = await _isar.lessonModels.where().sortByOrderIndex().findAll();
 
-          final currentIndex = allLessons.indexWhere(
-            (l) => l.modelId == lessonId,
-          );
+          final currentIndex = allLessons.indexWhere((l) => l.modelId == lessonId);
           if (currentIndex != -1 && currentIndex + 1 < allLessons.length) {
             final nextLesson = allLessons[currentIndex + 1];
             nextLesson.isLocked = false;

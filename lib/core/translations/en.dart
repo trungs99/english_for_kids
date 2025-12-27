@@ -25,7 +25,8 @@ final Map<String, String> en = {
   TranslationKeys.arGameTitle: 'AR Game',
   TranslationKeys.findObject: 'Find a @word!',
   TranslationKeys.skipButton: 'Skip',
-  TranslationKeys.skipStepMessage: 'You can skip this step and continue learning',
+  TranslationKeys.skipStepMessage:
+      'You can skip this step and continue learning',
   TranslationKeys.correctMessage: 'Great job! You found the @word!',
   TranslationKeys.cameraInitError: 'Failed to initialize camera',
   TranslationKeys.testArGame: 'Test AR Game',
@@ -50,17 +51,16 @@ final Map<String, String> en = {
   TranslationKeys.no: 'No',
   TranslationKeys.ok: 'OK',
   TranslationKeys.cancel: 'Cancel',
-  TranslationKeys.retry: 'Retry',
 
   // Errors
-  TranslationKeys.errorTitle: 'Error',
-  TranslationKeys.errorMissingArgs: 'Missing arguments',
-  TranslationKeys.errorCameraInitDetail: 'Camera initialization failed: @error',
-  TranslationKeys.errorMLKitInitDetail: 'ML Kit initialization failed: @error',
   TranslationKeys.errorCameraPermission:
       'Camera permission is required to play',
   TranslationKeys.errorCameraNotAvailable:
       'Camera is not available on this device',
+  TranslationKeys.errorTitle: 'Error',
+  TranslationKeys.errorMissingArgs: 'Missing arguments',
+  TranslationKeys.errorCameraInitDetail: 'Camera initialization failed: @error',
+  TranslationKeys.errorMLKitInitDetail: 'ML Kit initialization failed: @error',
   TranslationKeys.errorMicrophonePermission:
       'Microphone permission is required to play',
   TranslationKeys.errorMicrophoneNotAvailable:

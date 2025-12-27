@@ -36,6 +36,7 @@ dev_dependencies:
   flutter_gen_runner: ^5.12.0
   isar_community_generator: ^3.3.0
   build_runner: ^2.7.1
+  flutter_launcher_icons: ^0.14.4
 
 
 flutter_gen:
@@ -46,10 +47,24 @@ flutter_gen:
     flutter_svg: true
     rive: false
     lottie: false
-
+# dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/img_logo_app.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/img_logo_app.png"
+  
 flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/icons/
     - assets/images/learning/lession_1/
+    - assets/images/topic/
+    - assets/icons/
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: assets/fonts/Fredoka_Condensed-Medium.ttf
+    
