@@ -1,7 +1,7 @@
 import '../../domain/repositories/learning_repository_interface.dart';
 
 /// UseCase to seed initial learning data
-/// Seeds the "Alphabet" topic with 5 lessons (A-E) if database is empty
+/// Seeds 3 topics ("Khởi động", "Chào hỏi", "Gia đình") with 5 shared lessons (A-E) if database is empty
 class SeedInitialDataUseCase {
   final LearningRepositoryInterface _repository;
 

@@ -21,6 +21,14 @@ final Map<String, String> vi = {
   TranslationKeys.nextLesson: 'Bài Tiếp Theo',
   TranslationKeys.backToHome: 'Về Trang Chủ',
 
+  // AR Game
+  TranslationKeys.arGameTitle: 'Trò Chơi AR',
+  TranslationKeys.findObject: 'Tìm @word nào!',
+  TranslationKeys.skipButton: 'Bỏ qua',
+  TranslationKeys.correctMessage: 'Làm tốt lắm! Bé đã tìm thấy @word!',
+  TranslationKeys.cameraInitError: 'Không thể khởi động camera',
+  TranslationKeys.testArGame: 'Thử nghiệm AR Game',
+
   // Lessons
   TranslationKeys.lessonApple: 'Quả Táo',
   TranslationKeys.lessonBottle: 'Chai Nước',

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:english_for_kids/core/translations/translation_keys.dart';
 import 'package:english_for_kids/core/theme/app_colors.dart';
 import '../controllers/home_controller.dart';
+import 'package:flutter/foundation.dart'; // For kDebugMode
 
 class HomePage extends BaseView<HomeController> {
   const HomePage({super.key});
@@ -40,6 +41,13 @@ class HomePage extends BaseView<HomeController> {
               },
               child: Text(TranslationKeys.myProgress.tr),
             ),
+            if (kDebugMode) ...[
+              const SizedBox(height: 16),
+              MButton.elevated(
+                onPressed: controller.navigateToARGameTest,
+                child: Text(TranslationKeys.testArGame.tr),
+              ),
+            ],
           ],
         ),
       ),

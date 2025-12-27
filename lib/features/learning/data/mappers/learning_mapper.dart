@@ -15,6 +15,7 @@ extension VocabularyModelMapper on VocabularyModel {
       meaning: meaning,
       imagePath: imagePath,
       audioPath: audioPath,
+      allowedLabels: allowedLabels,
     );
   }
 }
@@ -28,6 +29,7 @@ extension VocabularyEntityMapper on VocabularyEntity {
       meaning: meaning,
       imagePath: imagePath,
       audioPath: audioPath,
+      allowedLabels: allowedLabels,
     );
   }
 }

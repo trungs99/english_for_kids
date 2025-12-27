@@ -19,6 +19,14 @@ class TranslationKeys {
   static const String nextLesson = 'next_lesson';
   static const String backToHome = 'back_to_home';
 
+  // AR Game
+  static const String arGameTitle = 'ar_game_title';
+  static const String findObject = 'find_object'; // with param @word
+  static const String skipButton = 'skip_button';
+  static const String correctMessage = 'correct_message'; // with param @word
+  static const String cameraInitError = 'camera_init_error';
+  static const String testArGame = 'test_ar_game';
+
   // Lessons
   static const String lessonApple = 'lesson_apple';
   static const String lessonBottle = 'lesson_bottle';

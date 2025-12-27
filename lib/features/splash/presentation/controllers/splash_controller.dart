@@ -10,6 +10,6 @@ class SplashController extends BaseController {
 
   Future<void> _navigateToHome() async {
     await Future.delayed(const Duration(seconds: 2));
-    Get.offNamed(AppRoutes.home);
+    Get.offAllNamed(AppRoutes.home);
   }
 }

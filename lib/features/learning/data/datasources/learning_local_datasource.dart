@@ -3,6 +3,7 @@ import '../models/topic_model.dart';
 import '../models/lesson_model.dart';
 import '../models/vocabulary_model.dart';
 import '../../domain/entities/lesson_step_type.dart';
+import '../constants/constants.dart';
 
 /// Local data source for learning feature using Isar database
 class LearningLocalDataSource {
@@ -111,94 +112,68 @@ class LearningLocalDataSource {
     return count > 0;
   }
 
-  /// Seed initial data - Alphabet topic with 5 lessons (A-E)
+  /// Seed initial data - 3 topics with 5 shared lessons (A-E)
   Future<void> seedInitialData() async {
     await _isar.writeTxn(() async {
-      // Create Alphabet topic
-      final alphabetTopic = TopicModel.create(
-        modelId: 'topic_alphabet',
-        name: 'Alphabet',
-        description: 'Learn the alphabet with fun words',
-        thumbnailPath: 'assets/images/learning/lession_1/img_apple.png',
-        orderIndex: 0,
-        isLocked: false,
-        isCompleted: false,
-      );
-      await _isar.topicModels.put(alphabetTopic);
+      // Create vocabularies first
+      final vocabularies = <String, VocabularyModel>{};
+      for (final vocabConst in VocabularyConstants.all) {
+        final vocab = VocabularyModel.create(
+          modelId: vocabConst.id,
+          word: vocabConst.word,
+          meaning: vocabConst.meaning,
+          imagePath: vocabConst.imagePath,
+          allowedLabels: vocabConst.allowedLabels,
+        );
+        await _isar.vocabularyModels.put(vocab);
+        vocabularies[vocabConst.id] = vocab;
+      }
 
-      // Create lessons and vocabularies
-      final lessonsData = [
-        {
-          'id': 'lesson_a',
-          'title': 'Letter A',
-          'word': 'Apple',
-          'meaning': 'Quả táo',
-          'image': 'assets/images/learning/lession_1/img_apple.png',
-        },
-        {
-          'id': 'lesson_b',
-          'title': 'Letter B',
-          'word': 'Bottle',
-          'meaning': 'Cái chai',
-          'image': 'assets/images/learning/lession_1/img_bottle.png',
-        },
-        {
-          'id': 'lesson_c',
-          'title': 'Letter C',
-          'word': 'Cup',
-          'meaning': 'Cái cốc',
-          'image': 'assets/images/learning/lession_1/img_cup.png',
-        },
-        {
-          'id': 'lesson_d',
-          'title': 'Letter D',
-          'word': 'Desk',
-          'meaning': 'Cái bàn',
-          'image': 'assets/images/learning/lession_1/img_desk.png',
-        },
-        {
-          'id': 'lesson_e',
-          'title': 'Letter E',
-          'word': 'Egg',
-          'meaning': 'Quả trứng',
-          'image':
-              'assets/images/learning/lession_1/img_ear.png', // Using ear.png as placeholder for egg
-        },
-      ];
-
-      for (int i = 0; i < lessonsData.length; i++) {
-        final data = lessonsData[i];
-
-        // Create lesson
+      // Create lessons and link vocabularies
+      final lessons = <String, LessonModel>{};
+      for (final lessonConst in LessonConstants.all) {
         final lesson = LessonModel.create(
-          modelId: data['id'] as String,
-          title: data['title'] as String,
-          orderIndex: i,
-          isLocked: i > 0, // First lesson unlocked, rest locked
+          modelId: lessonConst.id,
+          title: lessonConst.title,
+          orderIndex: lessonConst.orderIndex,
+          isLocked: lessonConst.orderIndex > 0, // First lesson unlocked, rest locked
           isCompleted: false,
           currentStep: LessonStep.story.toIdString(),
         );
         await _isar.lessonModels.put(lesson);
 
-        // Create vocabulary
-        final vocab = VocabularyModel.create(
-          modelId: 'vocab_${data['id']}',
-          word: data['word'] as String,
-          meaning: data['meaning'] as String,
-          imagePath: data['image'] as String,
-        );
-        await _isar.vocabularyModels.put(vocab);
-
         // Link vocabulary to lesson
-        lesson.vocabularies.add(vocab);
-        await lesson.vocabularies.save();
+        final vocab = vocabularies[lessonConst.vocabularyId];
+        if (vocab != null) {
+          lesson.vocabularies.add(vocab);
+          await lesson.vocabularies.save();
+        }
 
-        // Link lesson to topic
-        alphabetTopic.lessons.add(lesson);
+        lessons[lessonConst.id] = lesson;
       }
 
-      // Save topic with all lesson links
-      await alphabetTopic.lessons.save();
+      // Create topics and link shared lessons
+      for (final topicConst in TopicConstants.all) {
+        final topic = TopicModel.create(
+          modelId: topicConst.id,
+          name: topicConst.name,
+          description: topicConst.description,
+          thumbnailPath: topicConst.thumbnailPath,
+          orderIndex: topicConst.orderIndex,
+          isLocked: topicConst.orderIndex > 0, // First topic unlocked, rest locked
+          isCompleted: false,
+        );
+        await _isar.topicModels.put(topic);
+
+        // Link all shared lessons to this topic
+        for (final lessonId in topicConst.lessonIds) {
+          final lesson = lessons[lessonId];
+          if (lesson != null) {
+            topic.lessons.add(lesson);
+          }
+        }
+        await topic.lessons.save();
+      }
     });
   }
 }

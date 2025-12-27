@@ -21,6 +21,14 @@ final Map<String, String> en = {
   TranslationKeys.nextLesson: 'Next Lesson',
   TranslationKeys.backToHome: 'Back to Home',
 
+  // AR Game
+  TranslationKeys.arGameTitle: 'AR Game',
+  TranslationKeys.findObject: 'Find a @word!',
+  TranslationKeys.skipButton: 'Skip',
+  TranslationKeys.correctMessage: 'Great job! You found the @word!',
+  TranslationKeys.cameraInitError: 'Failed to initialize camera',
+  TranslationKeys.testArGame: 'Test AR Game',
+
   // Lessons
   TranslationKeys.lessonApple: 'Apple',
   TranslationKeys.lessonBottle: 'Bottle',

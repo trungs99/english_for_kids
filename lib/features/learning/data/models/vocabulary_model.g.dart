@@ -17,19 +17,24 @@ const VocabularyModelSchema = CollectionSchema(
   name: r'VocabularyModel',
   id: -408305115005495918,
   properties: {
-    r'audioPath': PropertySchema(
+    r'allowedLabels': PropertySchema(
       id: 0,
+      name: r'allowedLabels',
+      type: IsarType.stringList,
+    ),
+    r'audioPath': PropertySchema(
+      id: 1,
       name: r'audioPath',
       type: IsarType.string,
     ),
     r'imagePath': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'imagePath',
       type: IsarType.string,
     ),
-    r'meaning': PropertySchema(id: 2, name: r'meaning', type: IsarType.string),
-    r'modelId': PropertySchema(id: 3, name: r'modelId', type: IsarType.string),
-    r'word': PropertySchema(id: 4, name: r'word', type: IsarType.string),
+    r'meaning': PropertySchema(id: 3, name: r'meaning', type: IsarType.string),
+    r'modelId': PropertySchema(id: 4, name: r'modelId', type: IsarType.string),
+    r'word': PropertySchema(id: 5, name: r'word', type: IsarType.string),
   },
 
   estimateSize: _vocabularyModelEstimateSize,
@@ -67,6 +72,13 @@ int _vocabularyModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.allowedLabels.length * 3;
+  {
+    for (var i = 0; i < object.allowedLabels.length; i++) {
+      final value = object.allowedLabels[i];
+      bytesCount += value.length * 3;
+    }
+  }
   {
     final value = object.audioPath;
     if (value != null) {
@@ -86,11 +98,12 @@ void _vocabularyModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.audioPath);
-  writer.writeString(offsets[1], object.imagePath);
-  writer.writeString(offsets[2], object.meaning);
-  writer.writeString(offsets[3], object.modelId);
-  writer.writeString(offsets[4], object.word);
+  writer.writeStringList(offsets[0], object.allowedLabels);
+  writer.writeString(offsets[1], object.audioPath);
+  writer.writeString(offsets[2], object.imagePath);
+  writer.writeString(offsets[3], object.meaning);
+  writer.writeString(offsets[4], object.modelId);
+  writer.writeString(offsets[5], object.word);
 }
 
 VocabularyModel _vocabularyModelDeserialize(
@@ -100,12 +113,13 @@ VocabularyModel _vocabularyModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = VocabularyModel();
-  object.audioPath = reader.readStringOrNull(offsets[0]);
+  object.allowedLabels = reader.readStringList(offsets[0]) ?? [];
+  object.audioPath = reader.readStringOrNull(offsets[1]);
   object.id = id;
-  object.imagePath = reader.readString(offsets[1]);
-  object.meaning = reader.readString(offsets[2]);
-  object.modelId = reader.readString(offsets[3]);
-  object.word = reader.readString(offsets[4]);
+  object.imagePath = reader.readString(offsets[2]);
+  object.meaning = reader.readString(offsets[3]);
+  object.modelId = reader.readString(offsets[4]);
+  object.word = reader.readString(offsets[5]);
   return object;
 }
 
@@ -117,14 +131,16 @@ P _vocabularyModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -282,6 +298,200 @@ extension VocabularyModelQueryWhere
 
 extension VocabularyModelQueryFilter
     on QueryBuilder<VocabularyModel, VocabularyModel, QFilterCondition> {
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'allowedLabels',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'allowedLabels',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'allowedLabels',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'allowedLabels',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'allowedLabels',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'allowedLabels',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'allowedLabels',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'allowedLabels',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'allowedLabels', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsElementIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'allowedLabels', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'allowedLabels', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'allowedLabels', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'allowedLabels', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsLengthLessThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'allowedLabels', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsLengthGreaterThan(int length, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(r'allowedLabels', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
+  allowedLabelsLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.listLength(
+        r'allowedLabels',
+        lower,
+        includeLower,
+        upper,
+        includeUpper,
+      );
+    });
+  }
+
   QueryBuilder<VocabularyModel, VocabularyModel, QAfterFilterCondition>
   audioPathIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -1222,6 +1432,13 @@ extension VocabularyModelQuerySortThenBy
 extension VocabularyModelQueryWhereDistinct
     on QueryBuilder<VocabularyModel, VocabularyModel, QDistinct> {
   QueryBuilder<VocabularyModel, VocabularyModel, QDistinct>
+  distinctByAllowedLabels() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'allowedLabels');
+    });
+  }
+
+  QueryBuilder<VocabularyModel, VocabularyModel, QDistinct>
   distinctByAudioPath({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'audioPath', caseSensitive: caseSensitive);
@@ -1265,6 +1482,13 @@ extension VocabularyModelQueryProperty
   QueryBuilder<VocabularyModel, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<VocabularyModel, List<String>, QQueryOperations>
+  allowedLabelsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'allowedLabels');
     });
   }
 

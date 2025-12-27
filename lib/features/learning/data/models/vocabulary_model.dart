@@ -14,6 +14,7 @@ class VocabularyModel {
   late String meaning;
   late String imagePath;
   String? audioPath;
+  late List<String> allowedLabels;
 
   VocabularyModel();
 
@@ -23,5 +24,6 @@ class VocabularyModel {
     required this.meaning,
     required this.imagePath,
     this.audioPath,
+    this.allowedLabels = const [],
   });
 }
