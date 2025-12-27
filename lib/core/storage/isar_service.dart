@@ -4,6 +4,9 @@ import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:english_for_kids/core/exceptions/storage_error.dart';
 import 'package:exo_shared/exo_shared.dart';
+import 'package:english_for_kids/features/learning/data/models/topic_model.dart';
+import 'package:english_for_kids/features/learning/data/models/lesson_model.dart';
+import 'package:english_for_kids/features/learning/data/models/vocabulary_model.dart';
 
 class IsarService extends GetxService {
   late Isar _isar;
@@ -17,10 +20,11 @@ class IsarService extends GetxService {
       final dir = await getApplicationDocumentsDirectory();
 
       try {
-        _isar = await Isar.open(
-          [], // Schemas will be added here
-          directory: dir.path,
-        );
+        _isar = await Isar.open([
+          TopicModelSchema,
+          LessonModelSchema,
+          VocabularyModelSchema,
+        ], directory: dir.path);
       } catch (e) {
         // Critical: Implement a try-catch mechanism. If opening the database fails (e.g., due to corruption),
         // call a _recoverFromCorruption method to delete the old files and attempt to open it again.
@@ -31,7 +35,11 @@ class IsarService extends GetxService {
         await _recoverFromCorruption(dir.path);
 
         // Retry opening after recovery
-        _isar = await Isar.open([], directory: dir.path);
+        _isar = await Isar.open([
+          TopicModelSchema,
+          LessonModelSchema,
+          VocabularyModelSchema,
+        ], directory: dir.path);
       }
 
       await _performMigration();

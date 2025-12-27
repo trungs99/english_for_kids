@@ -1,31 +1,51 @@
 # Project Context
 
 ## Purpose
-[Describe your project's purpose and goals]
+An educational app designed for kids to learn English through an interactive 3-step flow: Story → Flashcard → AR Object Hunt.
 
 ## Tech Stack
-- [List your primary technologies]
-- [e.g., TypeScript, React, Node.js]
+- **Framework**: Flutter (Android ONLY)
+- **Architecture**: Clean Architecture (Domain, Data, Presentation)
+- **State Management**: GetX
+- **Database**: Isar (Local persistence)
+- **Utilities**: `exo_shared` (Internal library for base classes and UI)
+- **AI/ML**: Google ML Kit Image Labeling
+- **Assets**: `flutter_gen` for type-safe asset management
+- **I18n**: GetX translations with `TranslationKeys`
 
 ## Project Conventions
 
 ### Code Style
-[Describe your code style preferences, formatting rules, and naming conventions]
+- **Effective Dart**: Follow standard Dart style guide.
+- **Naming**: `PascalCase` for classes, `camelCase` for variables/methods, `snake_case` for file names and serialized IDs.
+- **Organization**: Clean Architecture folder structure.
 
 ### Architecture Patterns
-[Document your architectural decisions and patterns]
+- **Clean Architecture**: Strict separation between Domain (Pure Dart), Data (Persistence/Implementation), and Presentation (UI/Controllers).
+- **Base Classes**: Use `BaseView` and `BaseController` from `exo_shared`.
+- **Error Handling**: Wrap repository operations in `try-catch` and throw custom exceptions from `core/errors/`.
+- **Loading State**: Use `withLoadingSafe` and `isLoading` from `BaseController`.
 
 ### Testing Strategy
-[Explain your testing approach and requirements]
+- **Manual Verification**: Test on a physical Android device (Mandatory for AR features).
+- **Static Analysis**: `flutter analyze` must pass.
 
 ### Git Workflow
-[Describe your branching strategy and commit conventions]
+- Verb-led commit messages.
+- Feature branches for development.
 
 ## Domain Context
-[Add domain-specific knowledge that AI assistants need to understand]
+- **Learning Flow**: Each lesson has a Story step (reading), a Flashcard step (review), and an AR Game step (object detection).
+- **Progress Tracking**: Lessons and Topics are unlocked sequentially.
+- **Scoring/Completion**: A lesson is "done" only after the AR Game step is successfully completed.
 
 ## Important Constraints
-[List any technical, business, or regulatory constraints]
+- **Android ONLY**: No iOS support.
+- **Physical Device**: Required for ML Kit and AR performance.
+- **Offline First**: All learning content and ML processing must work without internet.
 
 ## External Dependencies
-[Document key external services, APIs, or systems]
+- `google_ml_kit_image_labeling`
+- `flutter_tts`
+- `isar_community`
+- `exo_shared` (Git dependency)
