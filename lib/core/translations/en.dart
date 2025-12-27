@@ -36,9 +36,7 @@ final Map<String, String> en = {
   TranslationKeys.retry: 'Retry',
 
   // Errors
-  TranslationKeys.errorCameraPermission:
-      'Camera permission is required to play',
-  TranslationKeys.errorCameraNotAvailable:
-      'Camera is not available on this device',
+  TranslationKeys.errorCameraPermission: 'Camera permission is required to play',
+  TranslationKeys.errorCameraNotAvailable: 'Camera is not available on this device',
   TranslationKeys.errorGeneric: 'Something went wrong. Please try again.',
 };
