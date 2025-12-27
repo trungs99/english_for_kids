@@ -43,14 +43,27 @@ The system SHALL persist learning data using Isar collections with proper IsarLi
 ---
 
 ### Requirement: Data Seeding
-The system SHALL seed initial learning content on first launch with the Alphabet topic.
+The system SHALL seed initial learning content on first launch using predefined constants for topics, lessons, and vocabularies.
 
-#### Scenario: Seed Alphabet topic
+#### Scenario: Seed topics from constants
 - **GIVEN** the database is empty
 - **WHEN** SeedInitialDataUseCase is executed
-- **THEN** the database SHALL contain 1 Topic named Alphabet
-- **AND** the Topic SHALL contain 5 Lessons for letters A through E
-- **AND** each Lesson SHALL contain 1 Vocabulary item
+- **THEN** the database SHALL contain 3 Topics from topic constants: "Khởi động", "Chào hỏi", "Gia đình"
+- **AND** each Topic SHALL have the correct metadata (id, name, description, thumbnailPath, orderIndex)
+
+#### Scenario: Seed lessons from constants
+- **GIVEN** the database is empty
+- **WHEN** SeedInitialDataUseCase is executed
+- **THEN** the database SHALL contain 5 Lessons from lesson constants (A-E)
+- **AND** each Lesson SHALL have the correct metadata (id, title, orderIndex)
+- **AND** the same 5 Lessons SHALL be linked to all 3 Topics (lessons are shared across topics)
+
+#### Scenario: Seed vocabularies from constants
+- **GIVEN** the database is empty
+- **WHEN** SeedInitialDataUseCase is executed
+- **THEN** the database SHALL contain 5 Vocabularies from vocabulary constants
+- **AND** each Vocabulary SHALL have the correct metadata (id, word, meaning, imagePath, allowedLabels)
+- **AND** Vocabularies SHALL be linked to their respective Lessons
 
 #### Scenario: Skip seeding if data exists
 - **GIVEN** the database already contains topics
@@ -59,12 +72,11 @@ The system SHALL seed initial learning content on first launch with the Alphabet
 
 #### Scenario: Initial unlock state
 - **GIVEN** the database is freshly seeded
-- **THEN** Topic Alphabet SHALL have isLocked equals false
-- **AND** Lesson Letter A SHALL have isLocked equals false
-- **AND** Lessons B C D E SHALL have isLocked equals true
+- **THEN** Topic with orderIndex 0 ("Khởi động") SHALL have isLocked equals false
+- **AND** Topics with orderIndex 1 and 2 ("Chào hỏi", "Gia đình") SHALL have isLocked equals true
+- **AND** Lesson with orderIndex 0 (Letter A) SHALL have isLocked equals false in all Topics
+- **AND** all other Lessons (B-E) SHALL have isLocked equals true in all Topics
 - **AND** all Lessons SHALL have currentStep equals story
-
----
 
 ### Requirement: Lesson Progress Tracking
 The system SHALL track and update lesson progress through the step sequence story, flashcard, arGame, done.
@@ -126,4 +138,379 @@ The repository MUST handle data access errors gracefully and provide methods for
 - **GIVEN** a lesson with ID lesson_a exists
 - **WHEN** getLessonById is called with lesson_a
 - **THEN** it SHALL return the corresponding LessonEntity
+
+### Requirement: Vocabulary Allowed Labels
+The system SHALL store allowed ML Kit labels for each vocabulary word to enable fuzzy matching during AR detection.
+
+#### Scenario: Vocabulary with allowed labels
+- **GIVEN** a vocabulary word "Apple"
+- **WHEN** the vocabulary is fetched from the repository
+- **THEN** the `VocabularyEntity` SHALL contain `allowedLabels` including "Apple", "Fruit", "Food", "Red"
+
+#### Scenario: Allowed labels storage
+- **GIVEN** a `VocabularyModel` is persisted to Isar
+- **WHEN** `allowedLabels` list is `["Cup", "Mug", "Drinkware"]`
+- **THEN** the list SHALL be stored as `List<String>` in the database
+
+#### Scenario: Empty allowed labels default
+- **GIVEN** a vocabulary item without AR support
+- **WHEN** `allowedLabels` is not specified
+- **THEN** it SHALL default to an empty list `[]`
+
+---
+
+### Requirement: Image Label Processing
+The system SHALL process camera images using ML Kit and match detected labels against vocabulary allowed labels.
+
+#### Scenario: Successful match with high confidence
+- **GIVEN** a vocabulary targets the word "Apple" with `allowedLabels` `["Apple", "Fruit", "Food"]`
+- **AND** ML Kit detects label "Fruit" with confidence 0.85
+- **WHEN** `ProcessImageLabelUseCase` evaluates the detection
+- **THEN** it SHALL return `true` (match found)
+
+#### Scenario: Rejected match with low confidence
+- **GIVEN** a vocabulary targets the word "Apple" with `allowedLabels` `["Apple", "Fruit", "Food"]`
+- **AND** ML Kit detects label "Apple" with confidence 0.55
+- **WHEN** `ProcessImageLabelUseCase` evaluates the detection
+- **THEN** it SHALL return `false` (confidence below 0.7 threshold)
+
+#### Scenario: No match for unrelated label
+- **GIVEN** a vocabulary targets the word "Apple" with `allowedLabels` `["Apple", "Fruit", "Food"]`
+- **AND** ML Kit detects label "Furniture" with confidence 0.95
+- **WHEN** `ProcessImageLabelUseCase` evaluates the detection
+- **THEN** it SHALL return `false` (label not in allowed list)
+
+#### Scenario: Case-insensitive matching
+- **GIVEN** `allowedLabels` contains "Coffee cup"
+- **AND** ML Kit detects label "coffee cup" with confidence 0.80
+- **WHEN** `ProcessImageLabelUseCase` evaluates the detection
+- **THEN** it SHALL return `true` (case-insensitive match)
+
+---
+
+### Requirement: Camera Integration
+The AR Game SHALL use the device back camera for object detection with proper permission handling via `PermissionUtil` from `exo_shared`.
+
+#### Scenario: Request camera permission before initialization
+- **WHEN** `ARGameController` starts
+- **THEN** it SHALL use `PermissionUtil.requestCameraPermission()` from `exo_shared`
+- **AND** wait for permission result before initializing camera
+
+#### Scenario: Back camera initialization
+- **GIVEN** camera permission is granted
+- **WHEN** `ARGameController` initializes camera
+- **THEN** it SHALL select the back-facing camera only
+- **AND** use `ResolutionPreset.medium` for performance
+
+#### Scenario: Camera permission denied
+- **GIVEN** camera permission is denied by the user via `PermissionUtil`
+- **WHEN** `ARGameController` receives denied result
+- **THEN** it SHALL show a permission rationale message
+- **AND** allow the user to skip the game
+
+#### Scenario: Image stream processing throttle
+- **WHEN** camera image stream is being processed
+- **THEN** the controller SHALL process at most 1 frame every 500ms
+- **AND** skip frames while a previous frame is still being processed
+
+---
+
+### Requirement: Error Handling
+The AR Game SHALL handle initialization and runtime errors gracefully.
+
+#### Scenario: Camera initialization failure
+- **GIVEN** camera fails to initialize (e.g., hardware error)
+- **WHEN** `ARGameController` catches the initialization exception
+- **THEN** it SHALL display an error message to the user
+- **AND** enable skip-only mode (skip button only, no camera preview)
+
+#### Scenario: ML Kit initialization failure
+- **GIVEN** ML Kit `ImageLabeler` fails to initialize
+- **WHEN** `ARGameController` catches the initialization exception
+- **THEN** it SHALL display an error message to the user
+- **AND** enable skip-only mode
+
+#### Scenario: Image processing exception
+- **GIVEN** an exception occurs during image label processing
+- **WHEN** `_processCameraImage` catches the exception
+- **THEN** it SHALL log the error
+- **AND** continue processing subsequent frames (not crash)
+
+---
+
+### Requirement: Game Flow
+The AR Game SHALL guide the user through finding a target object and handle success/skip actions.
+
+#### Scenario: Display target word
+- **WHEN** AR Game page is displayed
+- **THEN** it SHALL show "Find a [WORD]!" where `[WORD]` is the current vocabulary item
+
+#### Scenario: Object found success
+- **GIVEN** ML Kit detects a matching label with sufficient confidence
+- **WHEN** `ProcessImageLabelUseCase` returns `true`
+- **THEN** the game SHALL stop camera processing
+- **AND** show a success celebration dialog
+- **AND** provide a "Next" button to proceed
+
+#### Scenario: Skip button action
+- **GIVEN** the user taps the skip button
+- **WHEN** the skip action is triggered
+- **THEN** the game SHALL complete without detection
+- **AND** proceed to the next lesson step
+
+#### Scenario: Resource cleanup
+- **WHEN** AR Game page is closed
+- **THEN** `ARGameController` SHALL dispose camera controller
+- **AND** close ML Kit `ImageLabeler`
+
+---
+
+### Requirement: Debug Overlay
+The AR Game SHALL display a debug overlay showing real-time ML Kit detection results.
+
+#### Scenario: Display detected labels
+- **WHEN** ML Kit processes a camera frame
+- **THEN** the debug overlay SHALL display up to 5 detected labels
+- **AND** show confidence percentage for each label
+- **AND** position in top-left corner with semi-transparent background
+
+#### Scenario: Debug overlay visibility
+- **GIVEN** `showDebugOverlay` is `true`
+- **THEN** the debug overlay SHALL be visible during camera preview
+
+#### Scenario: Toggle debug overlay
+- **GIVEN** the debug overlay is visible
+- **WHEN** user taps the overlay
+- **THEN** it SHALL toggle visibility (hide if visible, show if hidden)
+
+---
+
+### Requirement: AR Game Translations
+The AR Game SHALL support localized UI text.
+
+#### Scenario: English translations
+- **WHEN** app locale is English
+- **THEN** "Find a @word" SHALL display as "Find a Apple"
+- **AND** skip button SHALL display "Skip"
+- **AND** success message SHALL display "Correct! Well done!"
+
+#### Scenario: Vietnamese translations
+- **WHEN** app locale is Vietnamese
+- **THEN** "Find a @word" SHALL display as "Tìm Apple"
+- **AND** skip button SHALL display "Bỏ Qua"
+- **AND** success message SHALL display "Chính xác! Giỏi lắm!"
+
+---
+
+### Requirement: Home Page Debug Button
+For testing purposes, the home page SHALL include a debug button to launch AR Game.
+
+#### Scenario: Debug button visibility
+- **GIVEN** the app is running in debug mode (`kDebugMode == true`)
+- **WHEN** the home page is displayed
+- **THEN** a "Test AR Game" button SHALL be visible
+
+#### Scenario: Debug button navigation
+- **GIVEN** the debug button is tapped
+- **WHEN** navigation is triggered
+- **THEN** it SHALL navigate to AR Game with mock vocabulary data
+- **AND** the mock vocabulary SHALL have predefined `allowedLabels` for testing
+
+#### Scenario: Debug button hidden in release
+- **GIVEN** the app is running in release mode (`kDebugMode == false`)
+- **WHEN** the home page is displayed
+- **THEN** the "Test AR Game" button SHALL NOT be visible
+
+### Requirement: Learning Data Constants
+The system SHALL provide constant definitions for initial learning content in the data layer.
+
+#### Scenario: Topic constants structure
+- **GIVEN** topic constants are defined
+- **WHEN** a constant is accessed
+- **THEN** it SHALL provide all required fields: id, name, description, thumbnailPath, orderIndex
+- **AND** the structure SHALL support associating lessons with topics (via lesson ID references)
+- **AND** constants SHALL include 3 topics: "Khởi động" (orderIndex 0), "Chào hỏi" (orderIndex 1), "Gia đình" (orderIndex 2)
+- **AND** each topic SHALL reference the same 5 shared lessons (A-E)
+
+#### Scenario: Lesson constants structure
+- **GIVEN** lesson constants are defined
+- **WHEN** a constant is accessed
+- **THEN** it SHALL provide all required fields: id, title, orderIndex
+- **AND** the structure SHALL support associating vocabularies with lessons
+- **AND** constants SHALL include 5 lessons (A-E) that are shared across all 3 topics
+- **AND** each lesson SHALL be associated with exactly one vocabulary item
+
+#### Scenario: Vocabulary constants structure
+- **GIVEN** vocabulary constants are defined
+- **WHEN** a constant is accessed
+- **THEN** it SHALL provide all required fields: id, word, meaning, imagePath, allowedLabels
+- **AND** allowedLabels SHALL be a non-empty list for AR-enabled vocabularies
+- **AND** constants SHALL include 5 vocabularies (one per lesson A-E)
+
+#### Scenario: Constants location
+- **GIVEN** constants are created
+- **WHEN** the file structure is examined
+- **THEN** constants SHALL be located in `lib/features/learning/data/constants/`
+- **AND** topic constants SHALL be in `topic_constants.dart`
+- **AND** lesson constants SHALL be in `lesson_constants.dart`
+- **AND** vocabulary constants SHALL be in `vocabulary_constants.dart`
+- **AND** a barrel file `constants.dart` MAY be provided to export all constants for convenient imports
+
+#### Scenario: Data source uses constants
+- **GIVEN** constants are defined
+- **WHEN** `LearningLocalDataSource.seedInitialData()` is called
+- **THEN** it SHALL use the constants instead of hardcoded data structures
+- **AND** it SHALL create 3 topics (replacing the previous "Alphabet" topic)
+- **AND** it SHALL associate the same 5 shared lessons with all 3 topics
+- **AND** the seeding logic SHALL remain functionally equivalent for relationships and unlock states
+
+### Requirement: Speech Recognition Integration
+The Speech Game SHALL use the `speech_to_text` package with English locale (`en_US`) for optimal English word recognition and proper microphone permission handling.
+
+#### Scenario: Initialize speech recognition with English locale
+- **WHEN** `SpeechGameController` initializes speech recognition
+- **THEN** it SHALL configure `speech_to_text` with locale `en_US`
+- **AND** ensure English language recognition regardless of device system language
+
+#### Scenario: Request microphone permission before initialization
+- **WHEN** `SpeechGameController` starts
+- **THEN** it SHALL request microphone permission using `Permission.microphone.request()`
+- **AND** wait for permission result before initializing speech recognition
+
+#### Scenario: Microphone permission denied
+- **GIVEN** microphone permission is denied by the user
+- **WHEN** `SpeechGameController` receives denied result
+- **THEN** it SHALL show a permission rationale message
+- **AND** allow the user to skip the game
+
+#### Scenario: Speech recognition initialization failure
+- **GIVEN** speech recognition fails to initialize (e.g., hardware error, service unavailable)
+- **WHEN** `SpeechGameController` catches the initialization exception
+- **THEN** it SHALL display an error message to the user
+- **AND** enable skip-only mode (skip button only, no speech input)
+
+---
+
+### Requirement: Speech Matching Logic
+The system SHALL match spoken text against vocabulary words using case-insensitive substring matching with normalized text to handle variations and phonetic similarities.
+
+#### Scenario: Successful match with exact word
+- **GIVEN** a vocabulary targets the word "Apple"
+- **AND** user speaks "Apple"
+- **WHEN** `ProcessSpeechUseCase` evaluates the spoken text
+- **THEN** it SHALL return `true` (match found)
+
+#### Scenario: Successful match with word in sentence
+- **GIVEN** a vocabulary targets the word "Apple"
+- **AND** user speaks "I see an Apple"
+- **WHEN** `ProcessSpeechUseCase` evaluates the spoken text
+- **THEN** it SHALL return `true` (word found in sentence)
+
+#### Scenario: Successful match with case variation
+- **GIVEN** a vocabulary targets the word "Apple"
+- **AND** user speaks "apple" (lowercase)
+- **WHEN** `ProcessSpeechUseCase` evaluates the spoken text
+- **THEN** it SHALL return `true` (case-insensitive match)
+
+#### Scenario: Handle speech recognition variations
+- **GIVEN** a vocabulary targets the word "Apple"
+- **AND** speech recognition returns "apple pie" (word embedded in phrase)
+- **WHEN** `ProcessSpeechUseCase` evaluates the spoken text
+- **THEN** it SHALL return `true` (target word found in recognized text)
+
+#### Scenario: No match for unrelated word
+- **GIVEN** a vocabulary targets the word "Apple"
+- **AND** user speaks "Banana"
+- **WHEN** `ProcessSpeechUseCase` evaluates the spoken text
+- **THEN** it SHALL return `false` (word not found)
+
+#### Scenario: Normalize whitespace before matching
+- **GIVEN** a vocabulary targets the word "Apple"
+- **AND** user speaks "  Apple  " (with extra spaces)
+- **WHEN** `ProcessSpeechUseCase` evaluates the spoken text
+- **THEN** it SHALL normalize whitespace and return `true` (match found)
+
+---
+
+### Requirement: Speech Game Flow
+The Speech Game SHALL guide the user through speaking vocabulary words and handle success/skip actions.
+
+#### Scenario: Display target word
+- **WHEN** Speech Game page is displayed
+- **THEN** it SHALL show "Say the word: [WORD]" where `[WORD]` is the current vocabulary item
+- **AND** display a listening indicator when speech recognition is active
+
+#### Scenario: Start listening on page load
+- **GIVEN** microphone permission is granted
+- **WHEN** Speech Game page is displayed
+- **THEN** speech recognition SHALL automatically start listening
+- **AND** display a visual indicator that the app is listening
+
+#### Scenario: Speech match success
+- **GIVEN** user speaks a word that matches the target vocabulary
+- **WHEN** `ProcessSpeechUseCase` returns `true`
+- **THEN** the game SHALL stop listening
+- **AND** show a success celebration dialog
+- **AND** provide a "Next" button to proceed
+
+#### Scenario: No match after speech
+- **GIVEN** user speaks a word that does not match the target vocabulary
+- **WHEN** `ProcessSpeechUseCase` returns `false`
+- **THEN** the game SHALL continue listening
+- **AND** optionally show a "Try again" message
+- **AND** allow the user to speak again
+
+#### Scenario: Skip button action
+- **GIVEN** the user taps the skip button
+- **WHEN** the skip action is triggered
+- **THEN** the game SHALL stop listening
+- **AND** complete without requiring speech match
+- **AND** proceed to the next lesson step
+
+#### Scenario: Resource cleanup
+- **WHEN** Speech Game page is closed
+- **THEN** `SpeechGameController` SHALL stop speech recognition
+- **AND** cancel any active listening sessions
+
+---
+
+### Requirement: Speech Game Translations
+The Speech Game SHALL support localized UI text in English and Vietnamese.
+
+#### Scenario: English translations
+- **WHEN** app locale is English
+- **THEN** "Say the word: @word" SHALL display as "Say the word: Apple"
+- **AND** listening indicator SHALL display "Listening..."
+- **AND** skip button SHALL display "Skip"
+- **AND** success message SHALL display "Great job! You said @word correctly!"
+
+#### Scenario: Vietnamese translations
+- **WHEN** app locale is Vietnamese
+- **THEN** "Say the word: @word" SHALL display as "Nói từ: Apple"
+- **AND** listening indicator SHALL display "Đang nghe..."
+- **AND** skip button SHALL display "Bỏ Qua"
+- **AND** success message SHALL display "Tuyệt vời! Bạn đã nói đúng từ @word!"
+
+---
+
+### Requirement: Home Page Debug Button for Speech Game
+For testing purposes, the home page SHALL include a debug button to launch Speech Game.
+
+#### Scenario: Debug button visibility
+- **GIVEN** the app is running in debug mode (`kDebugMode == true`)
+- **WHEN** the home page is displayed
+- **THEN** a "Test Speech Game" button SHALL be visible
+
+#### Scenario: Debug button navigation
+- **GIVEN** the debug button is tapped
+- **WHEN** navigation is triggered
+- **THEN** it SHALL navigate to Speech Game with mock vocabulary data
+- **AND** the mock vocabulary SHALL have a predefined word for testing
+
+#### Scenario: Debug button hidden in release
+- **GIVEN** the app is running in release mode (`kDebugMode == false`)
+- **WHEN** the home page is displayed
+- **THEN** the "Test Speech Game" button SHALL NOT be visible
+
+---
 

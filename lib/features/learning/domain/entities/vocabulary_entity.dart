@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Domain entity for vocabulary items
 /// Pure Dart class without database dependencies
 class VocabularyEntity {
@@ -6,6 +8,7 @@ class VocabularyEntity {
   final String meaning;
   final String imagePath;
   final String? audioPath;
+  final List<String> allowedLabels;
 
   const VocabularyEntity({
     required this.id,
@@ -13,6 +16,7 @@ class VocabularyEntity {
     required this.meaning,
     required this.imagePath,
     this.audioPath,
+    this.allowedLabels = const [],
   });
 
   /// Create a copy with some fields replaced
@@ -22,6 +26,7 @@ class VocabularyEntity {
     String? meaning,
     String? imagePath,
     String? audioPath,
+    List<String>? allowedLabels,
   }) {
     return VocabularyEntity(
       id: id ?? this.id,
@@ -29,6 +34,7 @@ class VocabularyEntity {
       meaning: meaning ?? this.meaning,
       imagePath: imagePath ?? this.imagePath,
       audioPath: audioPath ?? this.audioPath,
+      allowedLabels: allowedLabels ?? this.allowedLabels,
     );
   }
 
@@ -40,13 +46,21 @@ class VocabularyEntity {
         other.word == word &&
         other.meaning == meaning &&
         other.imagePath == imagePath &&
-        other.audioPath == audioPath;
+        other.audioPath == audioPath &&
+        listEquals(other.allowedLabels, allowedLabels);
   }
 
   @override
-  int get hashCode => Object.hash(id, word, meaning, imagePath, audioPath);
+  int get hashCode => Object.hash(
+    id,
+    word,
+    meaning,
+    imagePath,
+    audioPath,
+    Object.hashAll(allowedLabels),
+  );
 
   @override
   String toString() =>
-      'VocabularyEntity(id: $id, word: $word, meaning: $meaning, imagePath: $imagePath, audioPath: $audioPath)';
+      'VocabularyEntity(id: $id, word: $word, meaning: $meaning, imagePath: $imagePath, audioPath: $audioPath, allowedLabels: $allowedLabels)';
 }

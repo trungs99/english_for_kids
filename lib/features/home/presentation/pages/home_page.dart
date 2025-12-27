@@ -27,7 +27,9 @@ class HomePage extends BaseView<HomeController> {
         );
       }
 
-      final completedCount = controller.topics.where((t) => t.isCompleted).length;
+      final completedCount = controller.topics
+          .where((t) => t.isCompleted)
+          .length;
 
       return Container(
         decoration: BoxDecoration(
@@ -84,7 +86,8 @@ class HomePage extends BaseView<HomeController> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 24.0),
                 child: Obx(() {
-                  final currentTopic = controller.topics[controller.currentPageIndex.value];
+                  final currentTopic =
+                      controller.topics[controller.currentPageIndex.value];
                   final isLocked = currentTopic.isLocked;
 
                   return AnimatedContainer(
@@ -111,30 +114,41 @@ class HomePage extends BaseView<HomeController> {
                               }
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isLocked ? AppColors.greyLight : AppColors.primary,
+                          backgroundColor: isLocked
+                              ? AppColors.greyLight
+                              : AppColors.primary,
                           foregroundColor: AppColors.white,
                           disabledBackgroundColor: AppColors.greyLight,
                           disabledForegroundColor: AppColors.grey,
                           padding: const EdgeInsets.symmetric(vertical: 18),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
                           elevation: isLocked ? 0 : 2,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              isLocked ? Icons.lock_rounded : Icons.play_arrow_rounded,
-                              color: isLocked ? AppColors.grey : AppColors.white,
+                              isLocked
+                                  ? Icons.lock_rounded
+                                  : Icons.play_arrow_rounded,
+                              color: isLocked
+                                  ? AppColors.grey
+                                  : AppColors.white,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               isLocked
                                   ? TranslationKeys.completePreviousLesson.tr
                                   : TranslationKeys.startLearning.tr,
-                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                color: isLocked ? AppColors.grey : AppColors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    color: isLocked
+                                        ? AppColors.grey
+                                        : AppColors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),

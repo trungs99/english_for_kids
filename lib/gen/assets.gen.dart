@@ -11,8 +11,24 @@
 
 import 'package:flutter/widgets.dart';
 
+class $AssetsIconsGen {
+  const $AssetsIconsGen();
+
+  /// File path: assets/icons/ic_magnifying.png
+  AssetGenImage get icMagnifying => const AssetGenImage('assets/icons/ic_magnifying.png');
+
+  /// File path: assets/icons/ic_microphone.png
+  AssetGenImage get icMicrophone => const AssetGenImage('assets/icons/ic_microphone.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [icMagnifying, icMicrophone];
+}
+
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// File path: assets/images/bg_speech_game.png
+  AssetGenImage get bgSpeechGame => const AssetGenImage('assets/images/bg_speech_game.png');
 
   /// Directory path: assets/images/learning
   $AssetsImagesLearningGen get learning => const $AssetsImagesLearningGen();
@@ -21,7 +37,7 @@ class $AssetsImagesGen {
   AssetGenImage get splashLogo => const AssetGenImage('assets/images/splash_logo.png');
 
   /// List of all assets
-  List<AssetGenImage> get values => [splashLogo];
+  List<AssetGenImage> get values => [bgSpeechGame, splashLogo];
 }
 
 class $AssetsImagesLearningGen {
@@ -56,6 +72,7 @@ class $AssetsImagesLearningLession1Gen {
 class Assets {
   const Assets._();
 
+  static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
 }
 
