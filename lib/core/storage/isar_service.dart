@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:english_for_kids/core/exceptions/storage_error.dart';
+import 'package:english_for_kids/core/storage/models/app_config_model.dart';
 import 'package:exo_shared/exo_shared.dart';
 
 class IsarService extends GetxService {
@@ -18,7 +19,7 @@ class IsarService extends GetxService {
 
       try {
         _isar = await Isar.open(
-          [], // Schemas will be added here
+          [AppConfigModelSchema], // At least one schema is required
           directory: dir.path,
         );
       } catch (e) {
@@ -31,7 +32,7 @@ class IsarService extends GetxService {
         await _recoverFromCorruption(dir.path);
 
         // Retry opening after recovery
-        _isar = await Isar.open([], directory: dir.path);
+        _isar = await Isar.open([AppConfigModelSchema], directory: dir.path);
       }
 
       await _performMigration();
