@@ -20,14 +20,16 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.english_for_kids"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        minSdk = 28  // Android 9 (Pie) - Required for ML Kit
+        targetSdk = 34  // Match compileSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Required for ML Kit due to large number of methods
+        multiDexEnabled = true
     }
 
     buildTypes {

@@ -1,101 +1,116 @@
 ================================================================================
-TÊN DỰ ÁN: APP HỌC TIẾNG ANH TRẺ EM (INTERACTIVE STORIES & VOCABULARY)
-NGÀY BẮT ĐẦU: [Điền ngày bắt đầu]
-MỤC TIÊU: Xây dựng ứng dụng giáo dục cho trẻ em với 2 tính năng chính: Truyện tranh tương tác & Game từ vựng.
+PROJECT NAME: ENGLISH DISCOVERY FOR KIDS (AI & STORY INTEGRATED)
+VERSION: 2.0 (Updated with AI Vision & Quizlet Flow)
+DATE: [Điền ngày]
+TECH STACK: Flutter, GetX, Google ML Kit, Camera
 ================================================================================
 
-PHẦN 1: PHÂN TÍCH YÊU CẦU & CHUẨN BỊ (TUẦN 1)
+I. TỔNG QUAN DỰ ÁN (PROJECT OVERVIEW)
 --------------------------------------------------------------------------------
-1. Phân tích tính năng (Dựa trên ý tưởng gốc):
-   a. Module Truyện tranh tương tác:
-      - Hiển thị truyện dạng trang (Page view).
-      - Audio tự động đọc hoặc bấm để đọc.
-      - Tương tác: Chạm vào từ vựng -> Phát âm + Hiện nghĩa (Popup/Tooltip).
-      - Logic: Đọc hết trang -> Trigger mini-game kiểm tra bài -> Qua trang mới.
-   b. Module Game từ vựng:
-      - Chủ đề (Themes): Động vật, Trường học, Màu sắc, Số đếm.
-      - Gameplay: Kéo thả (Drag & Drop) từ vào hình ảnh tương ứng.
-      - Hệ thống phần thưởng: Tích lũy Sticker vào bộ sưu tập.
+Mục tiêu: Xây dựng ứng dụng học tiếng Anh tương tác đa chiều cho trẻ em.
+Phương pháp giáo dục (Flow):
+   1. LEARN (Học): Thẻ Flashcard (Quizlet Style) - Nghe & Nhìn.
+   2. PRACTICE (Thực hành): AI Camera Challenge - Tìm đồ vật thật.
+   3. APPLY (Áp dụng): Interactive Story - Đọc truyện có ngữ cảnh.
+   4. REVIEW (Ôn tập): Mini Game & Reward.
 
-2. Công nghệ đề xuất (Tech Stack):
-   - Ngôn ngữ: Flutter (khuyên dùng vì làm UI/Animation tốt, chạy cả Android/iOS) hoặc Unity (nếu muốn làm game nặng về hiệu ứng).
-   - Dữ liệu (Backend/Local): Sử dụng JSON/SQLite lưu trữ nội dung truyện và từ vựng (Offline-first).
-   - Âm thanh: Text-to-Speech (TTS) hoặc File ghi âm MP3 (Ghi âm sẽ tự nhiên hơn cho trẻ em).
-
-================================================================================
-PHẦN 2: THIẾT KẾ UI/UX & TÀI NGUYÊN (TUẦN 2-3)
 --------------------------------------------------------------------------------
-1. Thiết kế UI (Giao diện):
-   - Phong cách: Màu sắc tươi sáng, nút bấm to, font chữ tròn dễ đọc.
-   - Màn hình chính (Home): Menu chọn "Đọc truyện" hoặc "Chơi game".
-   - Màn hình Đọc truyện: Layout hiển thị ảnh full màn hình, text overlay, nút điều hướng.
-   - Màn hình Game: Khu vực hiển thị từ, khu vực hiển thị ảnh, hiệu ứng pháo hoa khi thắng.
-   - Màn hình Sticker: "Tủ đồ" chứa các sticker bé đã nhận được.
-
-2. Chuẩn bị Tài nguyên (Assets):
-   - Content: Viết kịch bản cho 3-5 câu chuyện mẫu.
-   - Images: Vẽ hoặc mua stock ảnh vector (Động vật, trường học...).
-   - Audio:
-     + Giọng đọc truyện (Narrator).
-     + Phát âm từng từ vựng.
-     + Âm thanh hiệu ứng (Vỗ tay, Ting ting, Fail, Success).
-
-================================================================================
-PHẦN 3: LẬP TRÌNH - GIAI ĐOẠN 1: CẤU TRÚC & MODULE TRUYỆN (TUẦN 4-6)
+II. PHÂN TÍCH CÔNG NGHỆ & THƯ VIỆN (DEPENDENCIES)
 --------------------------------------------------------------------------------
-1. Thiết lập dự án:
-   - Cài đặt điều hướng (Navigation/Routing).
-   - Cấu hình State Management (Provider/Bloc/GetX).
-   - Xây dựng Model dữ liệu: StoryModel, PageModel, WordModel.
+1. Core & Architecture:
+   - get: ^4.6.6 (Quản lý State, Route, Dependency Injection).
+   - equatable: ^2.0.5 (So sánh Object, tối ưu render lại UI khi State thay đổi).
 
-2. Phát triển Module Đọc truyện:
-   - Coding giao diện lật trang.
-   - Xử lý đồng bộ Audio và Text (Highlight chữ khi đọc).
-   - Xử lý sự kiện Touch:
-     + Chạm vào từ -> Dừng audio kể chuyện -> Phát âm từ đó -> Hiện nghĩa.
-   - Xây dựng Mini-game cuối trang: Câu hỏi trắc nghiệm đơn giản (Chọn hình đúng với nội dung vừa nghe).
+2. AI & Hardware (Tính năng Camera nhận diện):
+   - google_mlkit_image_labeling: ^0.13.0 (Nhận diện đồ vật offline).
+   - camera: ^0.11.0 (Truy cập phần cứng camera).
+   - permission_handler: ^11.3.0 (Xin quyền truy cập Camera/Microphone trên Android/iOS).
 
-================================================================================
-PHẦN 4: LẬP TRÌNH - GIAI ĐOẠN 2: MODULE GAME & REWARD (TUẦN 7-8)
+3. UI & Animations:
+   - flip_card: (Hiệu ứng lật thẻ 3D).
+   - flutter_tts hoặc audioplayers: (Phát âm thanh/Giọng đọc).
+
 --------------------------------------------------------------------------------
-1. Phát triển Module Game Từ Vựng:
-   - Coding màn hình chọn chủ đề (List view).
-   - Logic Game "Ghép từ - Hình ảnh":
-     + Random dữ liệu câu hỏi.
-     + Xử lý sự kiện Drag & Drop (Kéo thả).
-     + Check kết quả (Đúng/Sai).
-     + Hiệu ứng âm thanh vui nhộn khi ghép đúng.
-
-2. Hệ thống Phần thưởng (Reward System):
-   - Logic tính điểm/sao sau mỗi màn chơi.
-   - Logic mở khóa Sticker: Ví dụ hoàn thành 1 chủ đề -> Nhận 1 sticker.
-   - Lưu trữ tiến độ người chơi (SharedPreferences/Local DB) để khi thoát app không bị mất sticker.
-
-================================================================================
-PHẦN 5: KIỂM THỬ & HOÀN THIỆN (TUẦN 9)
+III. LUỒNG NGƯỜI DÙNG CHI TIẾT (USER FLOW)
 --------------------------------------------------------------------------------
-1. Testing (QA):
-   - Kiểm tra trên các thiết bị màn hình khác nhau (Tablet, Phone).
-   - Kiểm tra lỗi logic (Ví dụ: Bấm liên tục vào màn hình, kéo thả sai vị trí).
-   - Kiểm tra âm thanh (Có bị chồng chéo âm thanh không?).
+STEP 1: HOME SCREEN (BẢN ĐỒ BÀI HỌC)
+   - Giao diện: Dạng Map (Level 1, Level 2...) hoặc Grid chủ đề.
+   - Trạng thái: Bài chưa học bị khóa (Lock UI).
 
-2. Tối ưu (Polish):
-   - Thêm hiệu ứng chuyển cảnh (Transition) mượt mà.
-   - Tối ưu dung lượng ảnh/âm thanh để app không quá nặng.
+STEP 2: LEARNING PHASE (FLASHCARD QUIZLET)
+   - Màn hình hiển thị 1 thẻ bài lớn giữa màn hình.
+   - Hành động:
+     + Mặt trước: Hình ảnh (Vector/Cartoon) + Từ vựng Tiếng Anh.
+     + Tap vào thẻ: Lật xoay 3D -> Mặt sau: Nghĩa Tiếng Việt + Nút loa.
+     + Sự kiện Lật: Tự động phát âm thanh từ vựng.
+     + Nút Toggle: Chuyển chế độ "Anh trước - Việt sau" hoặc ngược lại.
+     + Nút Yêu thích (Heart): Lưu từ khó vào kho riêng.
 
-================================================================================
-PHẦN 6: PHÁT HÀNH (TUẦN 10)
+STEP 3: PRACTICE PHASE (AI CAMERA CHALLENGE - TÍNH NĂNG CỦA LEADER)
+   - Logic: Sau khi học xong 5 từ (ví dụ: Banana, Cup, Pen...).
+   - App hiển thị: "Bé hãy tìm một quả Chuối (Banana) thật cho mình xem nào!".
+   - Action: Mở Camera View.
+   - Xử lý kỹ thuật (Back-end logic):
+     + Stream hình ảnh từ Camera -> Gửi vào ML Kit Image Labeler.
+     + ML Kit trả về danh sách Labels (ví dụ: [Banana: 90%, Food: 80%]).
+     + So sánh: Nếu Label chứa "Banana" -> Hiệu ứng pháo hoa -> Phát âm "Excellent! This is a Banana".
+   - Fallback: Nếu không tìm thấy đồ vật thật, cho phép bỏ qua (Skip).
+
+STEP 4: APPLICATION PHASE (INTERACTIVE STORY)
+   - Màn hình chuyển sang đọc truyện ngắn chứa các từ vừa học.
+   - Text Highlight: Các từ (Banana, Cup...) sẽ được tô màu nổi bật trong đoạn văn.
+   - Tương tác: Chạm vào từ Highlight -> Hiện Popup nghĩa + Đọc lại mẫu câu.
+
+STEP 5: GAME & REWARD
+   - Mini-game nhanh: Kéo thả từ vào bóng (Shadow Matching).
+   - Hoàn thành: Tặng Sticker, mở khóa bài tiếp theo.
+
 --------------------------------------------------------------------------------
-1. Chuẩn bị Store Listing:
-   - Chụp ảnh màn hình (Screenshots) đẹp mắt.
-   - Viết mô tả hấp dẫn, nhấn mạnh từ khóa "Tiếng Anh cho bé", "Học qua truyện".
-   - Thiết kế Icon App nổi bật.
+IV. KẾ HOẠCH TRIỂN KHAI KỸ THUẬT (DEVELOPMENT PLAN)
+--------------------------------------------------------------------------------
 
-2. Upload:
-   - Đẩy lên Google Play Console / Apple App Store Connect.
-   - Chờ duyệt và theo dõi phản hồi.
+GIAI ĐOẠN 1: CORE & FLASHCARD (TUẦN 1-2)
+- Nhiệm vụ:
+  + Setup dự án Flutter, cấu hình GetX Pattern (Model, View, Controller).
+  + Xây dựng Data Model (Word, Lesson).
+  + Code màn hình Flashcard:
+    > Sử dụng thư viện `flip_card`.
+    > Viết `StudyController` xử lý logic phát âm thanh khi lật.
+
+GIAI ĐOẠN 2: TÍCH HỢP AI CAMERA (TUẦN 3-4) - QUAN TRỌNG
+- Nhiệm vụ:
+  + Cấu hình quyền (Permission) trong AndroidManifest.xml và Info.plist.
+  + Viết `CameraDetectionController`:
+    > Init CameraController.
+    > Start ImageStream.
+    > InputImage.fromBytes (Convert ảnh camera sang định dạng ML Kit đọc được).
+    > ImageLabeler.processImage (Nhận diện).
+  + Xử lý Logic Matching: So sánh kết quả AI trả về với Từ vựng bài học.
+  + Tối ưu Performance: Chỉ xử lý 1 frame mỗi 0.5s để tránh lag máy nóng máy.
+
+GIAI ĐOẠN 3: MODULE TRUYỆN & GAME (TUẦN 5-6)
+- Nhiệm vụ:
+  + Xây dựng UI đọc truyện lật trang.
+  + Đồng bộ highlight text với audio (nếu có audio đọc cả câu).
+  + Xây dựng hệ thống lưu trữ tiến độ (Hive/SharedPreferences) để lưu Sticker và Level đã qua.
+
+GIAI ĐOẠN 4: UI POLISHING & TEST (TUẦN 7)
+- Nhiệm vụ:
+  + Thêm animation chuyển cảnh mượt mà giữa các Step (Học -> Camera -> Truyện).
+  + Test trên thiết bị thật (Real Device) để kiểm tra Camera và độ nóng của máy.
+
+--------------------------------------------------------------------------------
+V. GHI CHÚ CHO DEVELOPER (DEV NOTES)
+--------------------------------------------------------------------------------
+1. Về Google ML Kit:
+   - Model mặc định (Base model) nhận diện được khoảng 400+ danh mục đồ vật phổ biến (Mèo, Chó, Bàn, Ghế, Trái cây...).
+   - Cần map (ánh xạ) từ vựng tiếng Anh của ML Kit trả về với từ vựng trong bài học (Ví dụ ML Kit trả về "Computer keyboard" thì cũng tính là đúng cho từ "Keyboard").
+
+2. Về Equatable:
+   - Sử dụng trong Bloc/GetX Controller để so sánh state của Camera (Ví dụ: Trạng thái đang Loading, Đã tìm thấy, Tìm sai) giúp tránh rebuild UI thừa thãi.
+
+3. Về Camera:
+   - Nhớ dispose (giải phóng) CameraController khi rời màn hình để tránh crash app.
 
 ================================================================================
-GHI CHÚ QUAN TRỌNG:
-- Đối với app trẻ em, UX (trải nghiệm người dùng) quan trọng hơn tính năng phức tạp. Bé chạm vào đâu cũng nên có phản hồi âm thanh hoặc chuyển động.
-- Tuân thủ chính sách "Designed for Families" của Google/Apple (Không thu thập dữ liệu cá nhân trái phép, quảng cáo phù hợp lứa tuổi).
+END OF PLAN
