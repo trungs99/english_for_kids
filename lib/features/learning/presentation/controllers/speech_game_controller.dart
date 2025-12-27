@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import 'package:english_for_kids/core/translations/translation_keys.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../domain/entities/vocabulary_entity.dart';
 import '../../domain/usecases/process_speech_usecase.dart';
 
@@ -14,9 +15,8 @@ import '../../domain/usecases/process_speech_usecase.dart';
 class SpeechGameController extends BaseController {
   final ProcessSpeechUseCase _processSpeechUseCase;
 
-  SpeechGameController({
-    required ProcessSpeechUseCase processSpeechUseCase,
-  }) : _processSpeechUseCase = processSpeechUseCase;
+  SpeechGameController({required ProcessSpeechUseCase processSpeechUseCase})
+    : _processSpeechUseCase = processSpeechUseCase;
 
   // Speech recognition
   final stt.SpeechToText _speech = stt.SpeechToText();
@@ -170,13 +170,26 @@ class SpeechGameController extends BaseController {
           style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
         content: Text(
-          TranslationKeys.speechSuccess.trParams({'word': targetVocabulary.word}),
+          TranslationKeys.speechSuccess.trParams({
+            'word': targetVocabulary.word,
+          }),
         ),
         actions: [
           TextButton(
             onPressed: () {
               Get.back();
-              Get.back();
+              final mockVocab = const VocabularyEntity(
+                id: 'test_cup',
+                word: 'Cup',
+                meaning: 'Cái cốc',
+                imagePath: 'assets/images/learning/lession_1/img_cup.png',
+                allowedLabels: ['Cup', 'Mug', 'Coffee cup'],
+              );
+
+              Get.offNamed(
+                AppRoutes.arGame,
+                arguments: {'vocabulary': mockVocab, 'lessonId': 'lesson_c'},
+              );
             },
             child: Text(TranslationKeys.nextLesson.tr),
           ),
@@ -207,4 +220,3 @@ class SpeechGameController extends BaseController {
     super.onClose();
   }
 }
-

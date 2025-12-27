@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 
 import 'package:english_for_kids/core/routes/app_routes.dart';
 import 'package:english_for_kids/features/learning/domain/entities/vocabulary_entity.dart';
-import 'package:get/get.dart';
-import 'package:flutter/foundation.dart';
 
 class HomeController extends BaseController {
   final GetTopicsUseCase _getTopicsUseCase;
@@ -107,7 +105,7 @@ class HomeController extends BaseController {
   }
 
   void navigateToLearning() {
-    // Will be implemented in learning feature
+    navigateToSpeechGameTest();
   }
 
   @override

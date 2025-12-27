@@ -50,7 +50,6 @@ final Map<String, String> vi = {
   TranslationKeys.no: 'Không',
   TranslationKeys.ok: 'Đồng Ý',
   TranslationKeys.cancel: 'Hủy',
-  TranslationKeys.retry: 'Thử Lại',
 
   // Errors
   TranslationKeys.errorTitle: 'Lỗi',
