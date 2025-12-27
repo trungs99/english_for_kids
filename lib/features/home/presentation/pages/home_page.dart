@@ -47,6 +47,11 @@ class HomePage extends BaseView<HomeController> {
                 onPressed: controller.navigateToARGameTest,
                 child: Text(TranslationKeys.testArGame.tr),
               ),
+              const SizedBox(height: 16),
+              MButton.elevated(
+                onPressed: controller.navigateToSpeechGameTest,
+                child: Text(TranslationKeys.testSpeechGame.tr),
+              ),
             ],
           ],
         ),

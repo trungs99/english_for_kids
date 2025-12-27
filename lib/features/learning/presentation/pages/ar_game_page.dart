@@ -58,19 +58,19 @@ class ARGamePage extends BaseView<ARGameController> {
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Camera not available',
+                    TranslationKeys.errorCameraNotAvailable.tr,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'You can skip this step and continue learning',
+                    TranslationKeys.skipStepMessage.tr,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
@@ -116,8 +116,8 @@ class ARGamePage extends BaseView<ARGameController> {
                 Text(
                   TranslationKeys.loading.tr,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -136,47 +136,12 @@ class ARGamePage extends BaseView<ARGameController> {
 
           // Target display card (top)
           Positioned(
-            top: 0,
+            bottom: 0,
             left: 0,
             right: 0,
-            child: TargetDisplayWidget(vocabulary: controller.targetVocabulary),
-          ),
-
-          // Skip button (bottom center, glassmorphism style)
-          Positioned(
-            bottom: 40,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: controller.skipGame,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white.withValues(alpha: 0.9),
-                    foregroundColor: AppColors.textPrimary,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 0,
-                  ),
-                  
-                  child: Text(TranslationKeys.skipButton.tr),
-                ),
-              ),
+            child: TargetDisplayWidget(
+              vocabulary: controller.targetVocabulary,
+              skipGame: controller.skipGame,
             ),
           ),
         ],

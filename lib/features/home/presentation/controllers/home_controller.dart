@@ -23,16 +23,29 @@ class HomeController extends BaseController {
       word: 'Cup',
       meaning: 'Cái cốc',
       imagePath: 'assets/images/learning/lession_1/img_cup.png',
-      allowedLabels: [
-        'Cup',
-        'Mug',
-        'Coffee cup',
-      ],
+      allowedLabels: ['Cup', 'Mug', 'Coffee cup'],
     );
 
     Get.toNamed(
       AppRoutes.arGame,
       arguments: {'vocabulary': mockVocab, 'lessonId': 'lesson_c'},
+    );
+  }
+
+  void navigateToSpeechGameTest() {
+    if (!kDebugMode) return;
+
+    final mockVocab = const VocabularyEntity(
+      id: 'test_apple',
+      word: 'Apple',
+      meaning: 'Quả táo',
+      imagePath: 'assets/images/learning/lession_1/img_apple.png',
+      allowedLabels: ['Apple', 'Fruit'],
+    );
+
+    Get.toNamed(
+      AppRoutes.speechGame,
+      arguments: {'vocabulary': mockVocab, 'lessonId': 'lesson_a'},
     );
   }
 }

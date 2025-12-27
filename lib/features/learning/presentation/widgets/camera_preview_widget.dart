@@ -16,7 +16,21 @@ class CameraPreviewWidget extends GetView<ARGameController> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Display camera preview
-    return CameraPreview(controller.cameraController!);
+    // Get screen size and camera aspect ratio
+    final size = MediaQuery.of(context).size;
+    final cameraRatio = controller.cameraController!.value.aspectRatio;
+
+    // Display camera preview with proper scaling
+    return SizedBox(
+      width: size.width,
+      height: size.height,
+      child: ClipRect(
+        child: SizedBox(
+          width: size.width,
+          height: size.width / cameraRatio,
+          child: CameraPreview(controller.cameraController!),
+        ),
+      ),
+    );
   }
 }

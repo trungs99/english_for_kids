@@ -23,9 +23,18 @@ class TranslationKeys {
   static const String arGameTitle = 'ar_game_title';
   static const String findObject = 'find_object'; // with param @word
   static const String skipButton = 'skip_button';
+  static const String skipStepMessage = 'skip_step_message';
   static const String correctMessage = 'correct_message'; // with param @word
   static const String cameraInitError = 'camera_init_error';
   static const String testArGame = 'test_ar_game';
+
+  // Speech Game
+  static const String speechGameTitle = 'speech_game_title';
+  static const String sayTheWord = 'say_the_word';
+  static const String listening = 'listening';
+  static const String speechSuccess = 'speech_success'; // with param @word
+  static const String speechTryAgain = 'speech_try_again';
+  static const String testSpeechGame = 'test_speech_game';
 
   // Lessons
   static const String lessonApple = 'lesson_apple';
@@ -42,7 +51,13 @@ class TranslationKeys {
   static const String retry = 'retry';
 
   // Errors
+  static const String errorTitle = 'error_title';
+  static const String errorMissingArgs = 'error_missing_args';
+  static const String errorCameraInitDetail = 'error_camera_init_detail';
+  static const String errorMLKitInitDetail = 'error_mlkit_init_detail';
   static const String errorCameraPermission = 'error_camera_permission';
   static const String errorCameraNotAvailable = 'error_camera_not_available';
+  static const String errorMicrophonePermission = 'error_microphone_permission';
+  static const String errorMicrophoneNotAvailable = 'error_microphone_not_available';
   static const String errorGeneric = 'error_generic';
 }

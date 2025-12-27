@@ -4,6 +4,7 @@ import 'package:english_for_kids/features/splash/presentation/bindings/splash_bi
 import 'package:english_for_kids/features/home/presentation/pages/home_page.dart';
 import 'package:english_for_kids/features/home/presentation/bindings/home_binding.dart';
 import 'package:english_for_kids/features/learning/presentation/pages/ar_game_page.dart';
+import 'package:english_for_kids/features/learning/presentation/pages/speech_game_page.dart';
 import 'app_routes.dart';
 
 class AppPages {
@@ -19,6 +20,7 @@ class AppPages {
       binding: HomeBinding(),
     ),
     ARGamePage.getPageRoute(name: AppRoutes.arGame),
+    SpeechGamePage.getPageRoute(name: AppRoutes.speechGame),
     // Learning route will be added in subsequent feature implementation
   ];
 }

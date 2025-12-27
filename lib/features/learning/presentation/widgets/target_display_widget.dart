@@ -1,15 +1,22 @@
 import 'package:english_for_kids/core/translations/translation_keys.dart';
 import 'package:english_for_kids/core/theme/app_colors.dart';
+import 'package:exo_shared/exo_shared.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../domain/entities/vocabulary_entity.dart';
+import 'animated_magnifying_icon_widget.dart';
 
 /// Widget to display the target word to find with image
 class TargetDisplayWidget extends StatelessWidget {
   final VocabularyEntity vocabulary;
+  final Function() skipGame;
 
-  const TargetDisplayWidget({super.key, required this.vocabulary});
+  const TargetDisplayWidget({
+    super.key,
+    required this.vocabulary,
+    required this.skipGame,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,70 +36,49 @@ class TargetDisplayWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
+          child: Stack(
             children: [
-              // Image
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryLight.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    vocabulary.imagePath,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(
-                        Icons.image_not_supported,
-                        color: AppColors.grey,
-                        size: 40,
-                      );
-                    },
-                  ),
+              Positioned(
+                right: 0,
+                top: 0,
+                height: 100,
+                width: 100,
+                child: const AnimatedMagnifyingIconWidget(
+                  width: 100,
+                  height: 100,
                 ),
               ),
-              const SizedBox(width: 16),
-              // Text content
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      TranslationKeys.pointCameraAt.tr,
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    TranslationKeys.pointCameraAt.tr,
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: 6),
-                    Text(
-                      vocabulary.word.toUpperCase(),
-                      style: TextStyle(
-                        color: AppColors.primary,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                        height: 1.2,
-                      ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    vocabulary.word.toUpperCase(),
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                      height: 1.2,
                     ),
-                    if (vocabulary.meaning.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        vocabulary.meaning,
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  MButton.text(
+                    borderRadius: BorderRadius.circular(100),
+                    onPressed: skipGame,
+                    child: Text(TranslationKeys.skipButton.tr),
+                  ),
+                ],
               ),
             ],
           ),

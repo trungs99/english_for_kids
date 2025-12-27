@@ -67,7 +67,7 @@ class ARGameController extends BaseController {
     // Get arguments
     final args = Get.arguments as Map<String, dynamic>?;
     if (args == null) {
-      _showError('Missing arguments');
+      _showError(TranslationKeys.errorMissingArgs.tr);
       Get.back();
       return;
     }
@@ -136,7 +136,7 @@ class ARGameController extends BaseController {
 
       await cameraController!.initialize();
     } catch (e) {
-      throw Exception('Camera initialization failed: $e');
+      throw Exception(TranslationKeys.errorCameraInitDetail.trParams({'error': e.toString()}));
     }
   }
 
@@ -149,7 +149,7 @@ class ARGameController extends BaseController {
       );
       imageLabeler = ImageLabeler(options: options);
     } catch (e) {
-      throw Exception('ML Kit initialization failed: $e');
+      throw Exception(TranslationKeys.errorMLKitInitDetail.trParams({'error': e.toString()}));
     }
   }
 
@@ -289,7 +289,8 @@ class ARGameController extends BaseController {
 
     // Show success alert using AlertUtil from exo_shared
     Get.dialog(AlertDialog(
-      title: Text(TranslationKeys.correctMessage.trParams({'word': targetVocabulary.word})),
+      title: Text(TranslationKeys.greatJob.tr, style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
+      content: Text(TranslationKeys.correctMessage.trParams({'word': targetVocabulary.word})),
       actions: [
         TextButton(onPressed: () {
           Get.back();
@@ -334,7 +335,7 @@ class ARGameController extends BaseController {
 
   void _showError(String message) {
     Get.snackbar(
-      'Error',
+      TranslationKeys.errorTitle.tr,
       message,
       backgroundColor: Colors.red,
       colorText: Colors.white,
